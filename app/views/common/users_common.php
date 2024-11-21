@@ -14,7 +14,7 @@
         <?php if(!empty($users)):?>
             <tbody>
             <?php for ($i = 0; $i < count($users); $i++): ?>
-                <tr ">
+                <tr >
                     <td ><?= $users[$i]['id'] ?></td>
                     <td ><?= $users[$i]['login']?></p></td>
                     <td class="row">
