@@ -12,4 +12,4 @@ spl_autoload_register(function($className){
     return false;
 });
 $router = new \app\lib\Router();
-$router->home();
+$router->init();
