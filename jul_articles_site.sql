@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Час створення: Лис 21 2024 р., 17:23
+-- Час створення: Лис 21 2024 р., 18:01
 -- Версія сервера: 8.0.30
 -- Версія PHP: 8.1.9
 
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Структура таблиці `article`
+-- Структура таблиці `articles`
 --
 
-CREATE TABLE `article` (
+CREATE TABLE `articles` (
   `id` int UNSIGNED NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `content` text COLLATE utf8mb4_general_ci NOT NULL,
@@ -52,9 +52,9 @@ CREATE TABLE `users` (
 --
 
 --
--- Індекси таблиці `article`
+-- Індекси таблиці `articles`
 --
-ALTER TABLE `article`
+ALTER TABLE `articles`
   ADD PRIMARY KEY (`id`),
   ADD KEY `author_id` (`author_id`);
 
@@ -69,9 +69,9 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT для таблиці `article`
+-- AUTO_INCREMENT для таблиці `articles`
 --
-ALTER TABLE `article`
+ALTER TABLE `articles`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -85,10 +85,10 @@ ALTER TABLE `users`
 --
 
 --
--- Обмеження зовнішнього ключа таблиці `article`
+-- Обмеження зовнішнього ключа таблиці `articles`
 --
-ALTER TABLE `article`
-  ADD CONSTRAINT `article_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `articles`
+  ADD CONSTRAINT `articles_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
