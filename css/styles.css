@@ -1,0 +1,58 @@
+h1{
+    text-align: center;
+}
+.body-admin{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+.div-nav{
+    background-color: rgb(195,203,190);
+    width: 150px;
+}
+.div-content{
+    background-image: url('/images/background.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: calc(100% - 150px);
+}
+.row {
+    display: flex;
+    justify-content: center;
+}
+table{
+    width: 80%;
+    margin: 0 auto;
+    border: 2px solid rgb(127,203,121);
+}
+table thead{
+    text-align: center;
+}
+td, tr,th{
+    border: 1px solid rgb(127,203,121);
+    text-align: center;
+    height: 33px;
+}
+td:nth-child(1),th:nth-child(1){
+    width: 60px;
+    text-align: center;
+}
+td:nth-child(1),th:nth-child(1){
+     text-align: center;
+ }
+th:nth-child(3){
+    width: 130px;
+    text-align: center;
+}
+td:nth-child(3){
+    text-align: center;
+    width: 130px;
+    border: 1px solid rgb(127,203,121);
+    align-content: center;
+}
+
+footer{
+    text-align: center;
+    margin: 10px 0;
+}
