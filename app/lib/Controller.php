@@ -4,14 +4,26 @@ namespace app\lib;
 
 class Controller
 {
+    protected Response $response;
+    protected Session $session;
+    protected string $login = '';
+    public function __construct()
+    {
+        $this->response = new Response();
+        $this->session = new Session();
+//        $this->login = $this->session->get('login');
+
+//        $this->users = new Users();
+//        $this->validators = new Validators();
+//        $this->notesManager = new Notes();
+    }
     /**
      * transferring data to the page and displaying admin
      * @return void
      */
     public function home(): void
     {
-        $response = new Response();
-        $response->render('home',['errors' => []], 'template_home');
+        $this->response->render('home',['errors' => []], 'template_home');
     }
     /**
      * transferring data to the page and displaying admin
@@ -19,8 +31,7 @@ class Controller
      */
     public function login(): void
     {
-        $response = new Response();
-        $response->render('login',['errors' => []], 'template_login');
+        $this->response->render('login',['errors' => []], 'template_login');
     }
 
     /**
@@ -29,8 +40,7 @@ class Controller
      */
     public function signOutUser(): void
     {
-        $session = new Session();
-        $session->delete('login');
+        $this->session->delete('login');
         $this->home();
     }
     /**
@@ -45,32 +55,60 @@ class Controller
             'login' => filter_input(INPUT_POST, 'login'),
             'password' => filter_input(INPUT_POST, 'pass'),
         ];
-        $response = new Response();
         if (empty($data['login'])) {
-            $response->render('login',['errorsLogin' => ERROR_LOGIN], 'template_login');
+            $this->response->render('login',['errorsLogin' => ERROR_LOGIN], 'template_login');
         }else {
 //            $res = $this->users->validationLoginUser($data['login'],$data['password']);
 //            if (!empty($res)){
 //                $this->response->render('index', ['errorsLogin' => $res]);
 //            }else {
-                $session = new Session();
-                $session->write('login', $data['login']);
-//                $notes = $this->notesManager->notesUser($data['login']);
-                $response->render('admin', [
+                $this->session->write('login', $data['login']);
+                $this->response->render('admin', [
                     'login' => $data['login'],
-//                    'notes' => $notes,
                 ],'template_admin');
             }
     }
+    /**
+     * User registration
+     * data reading, validation and saving
+     *  Redirect to note_page.php || or on error /index_page.php
+     * @return void
+     */
+    public function addUser() : void
+    {
+        $data = [
+            'login' => filter_input(INPUT_POST, 'reglogin'),
+            'password' => filter_input(INPUT_POST, 'regpass'),
+            'repassword' => filter_input(INPUT_POST, 'reregpass'),
+        ];
+
+//        $errors = $this->validators->validateInfoUser($data);
+//        if (!empty($errors)) {
+//            $this->response->render('index', ['errorsAdd' => $errors]);
+//        }else {
+//            $res = $this->users->validationAddUser($data['login']);
+//            if (!empty($res)){
+//                $this->response->render('index', ['errorsAdd' => $res]);
+//            }else {
+//                $this->users->addUser([
+//                    'login' => $data['login'],
+//                    'password' => $data['password'],
+//                ]);
+//                $this->session->write('login', $data['login']);
+//                $this->response->render('note', [
+//                    'login' => $data['login'],
+//                ]);
+//            }
+//        }
+    }
+
     public function changeUsers() : void
     {
         $userDB = new \app\lib\User();
         $logins = $userDB->getId_LoginUser();
-        $response = new Response();
-        $session = new Session();
-        $login = $session->get('login');
-        $response->render('users', [
-            'login' => $login,
+        $this->login = $this->session->get('login');
+        $this->response->render('users', [
+            'login' => $this->login,
             'users' => $logins,
         ],'template_admin');
     }
@@ -78,11 +116,9 @@ class Controller
     {
         $articleDB = new \app\lib\Article();
         $article = $articleDB->getId_TitleArticles();
-        $response = new Response();
-        $session = new Session();
-        $login = $session->get('login');
-        $response->render('articles', [
-            'login' => $login,
+        $this->login = $this->session->get('login');
+        $this->response->render('articles', [
+            'login' => $this->login,
             'articles' => $article,
         ],'template_admin');
     }
