@@ -20,11 +20,14 @@ class Router
         if (isset($_GET['action'])) {
             $action = filter_input(INPUT_GET, 'action');
         }
-        $controller = new Controller();
-        if (!method_exists($controller, $action)) {
-            self::notFound();
+        if ($action !== '')
+        {
+            $controller = new Controller();
+            if (!method_exists($controller, $action)) {
+                self::notFound();
+            }
+            $controller->$action();
         }
-        $controller->$action();
     }
     /**
      * Home application
