@@ -15,8 +15,8 @@ class User
         }
         $users = $this->getUsers();
         if (count($users) == 0) {
-            $pass = password_hash("admin", PASSWORD_DEFAULT);
-            $str = "INSERT INTO users(login, password) VALUES ('admin','". $pass . "');";
+            $hash = password_hash("admin", PASSWORD_DEFAULT);
+            $str = "INSERT INTO users(login, password) VALUES ('admin','". $hash . "');";
             var_dump($str);
             $this->query($str);
         }
@@ -39,6 +39,26 @@ class User
         }
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    public function getIdUser(string $login) : array
+    {
+        $query = "SELECT id FROM users WHERE login = '" . $login . "' LIMIT 1";
+        $result = $this->db->query($query);
+        if(!$result){
+            return [];
+        }
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
+    public function addUser(string $login, string $pass) : bool
+    {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+        $query = "INSERT INTO users(login, password) VALUES ('" . $login . "','" . $hash. "');";
+        return $this->db->query($query);
 
+    }
+    public function delUser(int $id) : bool
+    {
+        $query = "DELETE FROM users WHERE id=" . $id . ";";
+        return $this->db->query($query);
+    }
 }
