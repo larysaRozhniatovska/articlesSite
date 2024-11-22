@@ -29,5 +29,17 @@ class Article
         }
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    public function addArticle(string $title, string $content,int $author_id) : bool
+    {
+        $query = "INSERT INTO articles(title, content, author_id) VALUES 
+                ('" . $title . "','" . $content. "','" . $author_id . "');";
+        return $this->db->query($query);
+
+    }
+    public function delArticle(int $id) : bool
+    {
+        $query = "DELETE FROM articles WHERE id=" . $id . ";";
+        return $this->db->query($query);
+    }
 
 }
