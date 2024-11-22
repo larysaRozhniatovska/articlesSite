@@ -90,16 +90,33 @@ class Controller
 //            if (!empty($res)){
 //                $this->response->render('index', ['errorsAdd' => $res]);
 //            }else {
-//                $this->users->addUser([
-//                    'login' => $data['login'],
-//                    'password' => $data['password'],
-//                ]);
-//                $this->session->write('login', $data['login']);
-//                $this->response->render('note', [
-//                    'login' => $data['login'],
-//                ]);
+                $userDB = new \app\lib\User();
+                $userDB->addUser($data['login'], $data['password']);
+                $logins = $userDB->getId_LoginUser();
+                $this->login = $this->session->get('login');
+                $this->response->render('users', [
+                    'login' => $this->login,
+                    'users' => $logins,
+                ],'template_admin');
 //            }
 //        }
+    }
+    /**
+     * @return void
+     */
+    public function delUser() : void
+    {
+        $id = filter_input(INPUT_POST, 'idDelUser');
+        $userDB = new \app\lib\User();
+        if(is_numeric($id)) {
+            $userDB->delUser($id);
+        }
+        $this->login = $this->session->get('login');
+        $logins = $userDB->getId_LoginUser();
+        $this->response->render('users', [
+            'login' => $this->login,
+            'users' => $logins,
+        ],'template_admin');
     }
 
     public function changeUsers() : void
@@ -122,4 +139,53 @@ class Controller
             'articles' => $article,
         ],'template_admin');
     }
+
+    public function addArticle() : void
+    {
+        $this->login = $this->session->get('login');
+        $userDB = new \app\lib\User();
+        $author_id = $userDB->getIdUser($this->login);
+        $data = [
+            'title' => filter_input(INPUT_POST, 'title'),
+            'content' => filter_input(INPUT_POST, 'content'),
+        ];
+
+//        $errors = $this->validators->validateInfoUser($data);
+//        if (!empty($errors)) {
+//            $this->response->render('index', ['errorsAdd' => $errors]);
+//        }else {
+//            $res = $this->users->validationAddUser($data['login']);
+//            if (!empty($res)){
+//                $this->response->render('index', ['errorsAdd' => $res]);
+//            }else {
+        $articleDB = new \app\lib\Article();
+        $author_id = $author_id[0]["id"];
+        $articleDB->addArticle($data['title'], $data['content'], $author_id);
+        $article = $articleDB->getId_TitleArticles();
+        $this->response->render('articles', [
+            'login' => $this->login,
+            'articles' => $article,
+        ],'template_admin');
+//            }
+//        }
+    }
+
+    /**
+     * @return void
+     */
+    public function delArticle() : void
+    {
+        $id = filter_input(INPUT_POST, 'idDelArticle');
+        $articleDB = new \app\lib\Article();
+        if(is_numeric($id)) {
+            $articleDB->delArticle($id);
+        }
+        $this->login = $this->session->get('login');
+        $article = $articleDB->getId_TitleArticles();
+        $this->response->render('articles', [
+            'login' => $this->login,
+            'articles' => $article,
+        ],'template_admin');
+    }
+
 }
