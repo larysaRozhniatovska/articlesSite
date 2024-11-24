@@ -2,19 +2,22 @@
 
 namespace app\lib;
 
+use Couchbase\IndexNotFoundException;
+
 class Router
 {
     // Маршруты
 // [маршрут => функция которая будет вызвана]
-    protected array $routes = [
+    protected static array $routes = [
         '/' => 'home.php',
         '/admin' => 'admin.php',
     ];
+
     /**
      * Init application
      * @return void
      */
-    public  function init() : void
+    public static function init() : void
     {
         $action = '';
         if (isset($_GET['action'])) {
@@ -24,16 +27,28 @@ class Router
         {
             $controller = new Controller();
             if (!method_exists($controller, $action)) {
-                self::notFound();
+                $controllerUser = new ControllerUserDB();
+                if (!method_exists($controllerUser, $action)){
+                    $controllerArticle = new ControllerArticleDB();
+                    if (!method_exists($controllerArticle, $action)){
+                        self::notFound();
+                    }else {
+                        $controllerArticle->$action();
+                    }
+                }else{
+                    $controllerUser->$action();
+                }
+            }else {
+                $controller->$action();
             }
-            $controller->$action();
         }
     }
+
     /**
      * Home application
      * @return void
      */
-    public  function home() : void
+    public static  function home() : void
     {
         $action = 'home';
         if (isset($_GET['action'])) {
@@ -45,7 +60,12 @@ class Router
         }
         $controller->$action();
     }
-    public  function admin() : void
+
+    /**
+     *  Mode admin application
+     * @return void
+     */
+    public static  function admin() : void
     {
         $action = 'login';
         if (isset($_GET['action'])) {
@@ -59,14 +79,13 @@ class Router
     }
 
     /**
-     * Generate 404 status
+     * notFound page
      * @return never
      */
     public static function notFound() : never
     {
         http_response_code(404);
-        //TODO if need especially view
-        exit();
+        exit;
     }
     /**
      * generate url by action
@@ -77,14 +96,16 @@ class Router
     {
         return '/?action=' . $action;
     }
+
     /**
      * redirect to specify url
+     * @return mixed|string|void
      */
-    public function redirect()
+    public static  function redirect()
     {
-        if (array_key_exists($_SERVER['REQUEST_URI'], $this->routes)) {
-            return $this->routes[$_SERVER['REQUEST_URI']];
+        if (array_key_exists($_SERVER['REQUEST_URI'], self::$routes)) {
+            return self::$routes[$_SERVER['REQUEST_URI']];
         }
-        $this->notFound();
+        self::notFound();
     }
 }
