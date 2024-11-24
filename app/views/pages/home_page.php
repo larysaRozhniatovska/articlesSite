@@ -1,6 +1,15 @@
-<div >
-    <h1 class="w3-border-left w3-text-red w3-xlarge">TEXT_SITE_NAME</h1>
+<div class="div-home">
+    <?php if(empty($articles)) : ?>
     <div >
-        Articels not found
+        Articeles not found
     </div>
+    <?php else : ?>
+        <?php foreach($articles as $article) : ?>
+        <ul>
+            <li><a href="<?= \app\lib\Router::url('viewArticle') . '&id=' . $article['id']?>"><?=$article['title'] ?></a></li>
+        </ul>
+
+        <?php endforeach;
+    endif;?>
+
 </div>
