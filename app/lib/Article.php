@@ -1,45 +1,26 @@
 <?php
 namespace app\lib;
-class Article
+class Article extends AbstractDB
 {
-    private \mysqli $db;
-
+    protected string $table = 'articles';
     public function __construct()
     {
-        $this->db = new \mysqli(DB_HOST, DB_USER,DB_PASSWORD,DB_NAME);
-        if($this->db->connect_errno != 0){
-            exit($this->db->connect_error);
-        }
+       parent::__construct();
     }
-    public function getArticles() : array
-    {
-        $query = "SELECT * FROM articles";
-        $result = $this->db->query($query);
-        if(!$result){
-            return [];
-        }
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-    public function getId_TitleArticles() : array
-    {
-        $query = "SELECT id,title FROM articles";
-        $result = $this->db->query($query);
-        if(!$result){
-            return [];
-        }
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+    /**
+     * add article
+     * @param string $title
+     * @param string $content
+     * @param int $author_id
+     * @return bool
+     * @throws \Couchbase\QueryErrorException
+     */
     public function addArticle(string $title, string $content,int $author_id) : bool
     {
-        $query = "INSERT INTO articles(title, content, author_id) VALUES 
-                ('" . $title . "','" . $content. "','" . $author_id . "');";
-        return $this->db->query($query);
+        $curDateTime =  gmdate("YmdHis");
+        $query = "INSERT INTO {$this->table}(title, content, created_at, author_id) VALUES ( '{$title}','{$content}','{$curDateTime}','{$author_id}')" ;
+        return $this->queryBool($query);
 
-    }
-    public function delArticle(int $id) : bool
-    {
-        $query = "DELETE FROM articles WHERE id=" . $id . ";";
-        return $this->db->query($query);
     }
 
 }

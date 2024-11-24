@@ -1,64 +1,56 @@
 <?php
 namespace app\lib;
-class User
+class User extends AbstractDB
 {
-    private \mysqli $db;
-    public function query(string $query) : bool
-    {
-        return $this->db->query($query);
-    }
+    protected string $table = 'users';
     public function __construct()
     {
-        $this->db = new \mysqli(DB_HOST, DB_USER,DB_PASSWORD,DB_NAME);
-        if($this->db->connect_errno != 0){
-            exit($this->db->connect_error);
-        }
-        $users = $this->getUsers();
+        parent::__construct();
+    }
+    /**
+     * add if no users
+     * @return void
+     * @throws \Couchbase\QueryErrorException
+     */
+    protected function NotUser()
+    {
+        $users = $this->getAll();
         if (count($users) == 0) {
             $hash = password_hash("admin", PASSWORD_DEFAULT);
-            $str = "INSERT INTO users(login, password) VALUES ('admin','". $hash . "');";
+            $str = "INSERT INTO users(login, password) VALUES ('admin','$hash')";
             var_dump($str);
-            $this->query($str);
+            $this->queryBool($str);
         }
-    }
-    public function getUsers() : array
-    {
-        $query = "SELECT * FROM users";
-        $result = $this->db->query($query);
-        if(!$result){
-            return [];
-        }
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-    public function getId_LoginUser() : array
-    {
-        $query = "SELECT id,login FROM users";
-        $result = $this->db->query($query);
-        if(!$result){
-            return [];
-        }
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-    public function getIdUser(string $login) : array
-    {
-        $query = "SELECT id FROM users WHERE login = '" . $login . "' LIMIT 1";
-        $result = $this->db->query($query);
-        if(!$result){
-            return [];
-        }
-        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * $login user id
+     * @param string $login
+     * @return bool|array
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function getIdUser(string $login) : bool | array
+    {
+        $query = "SELECT id FROM {$this->table} WHERE login = '{$login}' LIMIT 1";
+        return $this->queryRow($query);
+    }
+
+    /**
+     * add user
+     * @param string $login
+     * @param string $pass
+     * @return bool
+     * @throws \Couchbase\QueryErrorException
+     */
     public function addUser(string $login, string $pass) : bool
     {
+        $users = $this->getAll();
+        $logins = array_column($users, 'login');
+        if (in_array($login, $logins))
+            return false;
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $query = "INSERT INTO users(login, password) VALUES ('" . $login . "','" . $hash. "');";
-        return $this->db->query($query);
+        $query = "INSERT INTO {$this->table}(login, password) VALUES ('{$login}','{$hash}')";
+        return $this->queryBool($query);
+    }
 
-    }
-    public function delUser(int $id) : bool
-    {
-        $query = "DELETE FROM users WHERE id=" . $id . ";";
-        return $this->db->query($query);
-    }
 }
