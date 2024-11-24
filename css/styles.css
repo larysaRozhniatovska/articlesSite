@@ -1,6 +1,18 @@
-h1{
+.body-home{
+    margin: 10px 20px;
+    background-image: url('/images/background.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+header{
     text-align: center;
 }
+.div-home{
+    height: 80vh;
+}
+
 .body-admin{
     display: flex;
     flex-direction: row;
@@ -9,6 +21,16 @@ h1{
 .div-nav{
     background-color: rgb(195,203,190);
     width: 150px;
+}
+.div-flex{
+    width: 100%;
+    display: inline-block;
+}
+.div-left{
+    float: left;
+}
+.div-right{
+    float: right;
 }
 .div-content{
     background-image: url('/images/background.jpg');
