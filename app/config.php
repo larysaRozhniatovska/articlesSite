@@ -1,5 +1,6 @@
 <?php
-const TEXT_SITE_NAME = 'Articles';
+const TEXT_SITE_NAME = 'Articles on PHP';
+const TEXT_FOOTER = 'Created Larysa Rozhniatovska, November 2024';
 const DB_HOST = 'localhost';
 const DB_USER = 'root';
 const DB_PASSWORD = '';

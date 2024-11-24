@@ -11,5 +11,4 @@ spl_autoload_register(function($className){
     }
     return false;
 });
-$router = new \app\lib\Router();
-$router->init();
+\app\lib\Router::init();
