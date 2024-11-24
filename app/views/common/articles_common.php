@@ -50,7 +50,7 @@
             <label for="id-title">Title</label>
             <input class="w3-input" type="text" name="title" id="id-title" placeholder="Enter title">
         </div>
-        <div class="w3-margin ">
+        <div class="div-colum">
             <label for="id-content">Content</label>
             <textarea  name="content" id="id-content" placeholder="Enter content"> </textarea>
         </div>
