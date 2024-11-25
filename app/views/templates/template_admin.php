@@ -33,5 +33,5 @@
         </div>
 
     </body>
-<!--    <script src="--><?php //=JS_DIR . 'script.js'?><!--" ></script>-->
+    <script src="<?=JS_DIR . 'script.js'?>" ></script>
 </html>
