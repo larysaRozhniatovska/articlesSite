@@ -30,6 +30,7 @@ header{
     float: left;
 }
 .div-right{
+    margin-right: 100px;
     float: right;
 }
 .div-content{
@@ -50,7 +51,11 @@ header{
     flex-direction: column;
     justify-content: center;
 }
-
+textarea{
+    margin: 0 10px;
+    padding: 0 20px;
+    height: 300px;
+}
 table{
     width: 80%;
     margin: 0 auto;
