@@ -29,6 +29,12 @@ class AbstractDB
         return true;
     }
 
+    /**
+     * request completed or not completed
+     * @param string $query
+     * @return bool
+     * @throws QueryErrorException
+     */
     public function queryBool(string $query) : bool
     {
         $result = $this->db->query($query);
@@ -92,10 +98,8 @@ class AbstractDB
     public function getAllbyId(int $id) : array
     {
         $query = "SELECT * FROM {$this->table} WHERE id = {$id}";
-        $result = $this->queryRow($query);
         return $this->queryRow($query);
     }
-
 
     /**
      * delete record
