@@ -48,7 +48,7 @@ if (!empty($article)){
     <div class="w3-modal-content ">
         <header class="w3-container w3-teal">
             <h1 class="w3-border-left w3-text-red w3-xlarge ">
-                <?php if ($modeEdit): ?>
+                <?php if  ($modeEdit === 'edit'):  ?>
                     Edit Article
                 <?php else: ?>
                     Add Article
@@ -62,6 +62,7 @@ if (!empty($article)){
         <div class="w3-margin">
             <label for="id-title">Title</label>
             <?php if (!empty($article)): ?>
+
             <input class="w3-input" type="text" name="title" id="id-title" value="<?=$article['title']?>">
             <?php else: ?>
                 <input class="w3-input" type="text" name="title" id="id-title" placeholder="Enter title">
@@ -69,31 +70,28 @@ if (!empty($article)){
         </div>
         <div class="div-colum">
             <label for="id-content">Content</label>
-            <?php if (!empty($article)): ?>
+            <?php if (!empty($article)):?>
                 <textarea  name="content" id="id-content" > <?=$article['content']?></textarea>
             <?php else: ?>
-                <textarea  name="content" id="id-content" placeholder="<?=$article['content']?>"> </textarea>
+                <textarea  name="content" id="id-content" placeholder="Enter content"> </textarea>
             <?php endif; ?>
         </div>
+        <?php if (!empty($errorsAdd)): ?>
+            <!--            <ul class="w3-red w3-left w3-left-align" id="errorsLogin" >-->
+            <dev class="w3-red w3-center w3-center-align" id="errorsLogin" > <?= $errorsAdd; ?> </dev>
+        <?php endif; ?>
         <div class="w3-container w3-center w3-margin-bottom w3-margin-top ">
             <button class="w3-btn w3-teal w3-margin-bottom" style="min-width:50%">
-                <?php if ($modeEdit): ?>
+                <?php if  ($modeEdit === 'edit'):  ?>
                 Edit
                 <?php else: ?>
                 Add
                 <?php endif; ?>
             </button>
         </div>
-        <?php if (!empty($errorsAdd)): ?>
-        <ul class="w3-red w3-left w3-left-align" id="errorsAdd">
-            <?php foreach ($errorsAdd as $key => $error):?>
-                <li> <?= $error; ?> </li>
-            <?php endforeach; ?>
-        </ul>
-        <?php endif; ?>
     </div>
 </form>
-<?php if($modeEdit):?>
+<?php if($modeEdit !== 'add'):?>
     <script>
         document.getElementById('formModal').style.display='block';
     </script>

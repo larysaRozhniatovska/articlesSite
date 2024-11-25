@@ -6,7 +6,7 @@ const DB_USER = 'root';
 const DB_PASSWORD = '';
 const DB_NAME = 'jul_articles_site';
 const ERROR_LOGIN = 'Incorrect login or password. Please try ago';
-
+const ERROR_ADD = 'Incorrect data. Please try ago';
 //DIR===========================================================
 const LIB_DIR = APP_DIR . 'lib' . DIRECTORY_SEPARATOR;
 const VIEWS_DIR = APP_DIR . 'views' . DIRECTORY_SEPARATOR;

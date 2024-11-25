@@ -20,14 +20,14 @@ class ControllerArticleDB extends Controller
      * @return void
      * @throws \Couchbase\QueryErrorException
      */
-    public function changeArticles() : void
+    public function changeArticles(): void
     {
         $articles = $this->articleDB->getAllIdAndField('title');
         $this->response->render('articles', [
             'login' => $this->login,
             'articles' => $articles,
-            'modeEdit' => false,
-        ],'template_admin');
+            'modeEdit' => 'add',
+        ], 'template_admin');
     }
 
     /**
@@ -35,7 +35,7 @@ class ControllerArticleDB extends Controller
      * @return void
      * @throws \Couchbase\QueryErrorException
      */
-    public function addArticle() : void
+    public function addArticle(): void
     {
         $mode = false;
         if (isset($_GET['modeEdit'])) {
@@ -49,33 +49,36 @@ class ControllerArticleDB extends Controller
             'title' => filter_input(INPUT_POST, 'title'),
             'content' => filter_input(INPUT_POST, 'content'),
         ];
-//        $errors = $this->validators->validateInfoUser($data);
-//        if (!empty($errors)) {
-//            $this->response->render('index', ['errorsAdd' => $errors]);
-//        }else {
-//            $res = $this->users->validationAddUser($data['login']);
-//            if (!empty($res)){
-//                $this->response->render('index', ['errorsAdd' => $res]);
-//            }else {
-
-        if (!$mode) {
-            $userDB = new \app\lib\User();
-            $author_id = $userDB->getIdUser($this->login);
-            $author_id = (int) $author_id["id"];
-            $this->articleDB->addArticle($data['title'], $data['content'], $author_id);
-        }else{
-            $this->articleDB->editArticle($article_id,$data['title'], $data['content']);
-        }
-
+        $errors = ($data['title'] === '') || ($data['content'] === '');
+        if ($errors === true) {
+            if ($mode !== 'edit'){
+                $mode = 'check';
+            }
             $articles = $this->articleDB->getAllIdAndField('title');
-        $this->response->render('articles', [
-            'login' => $this->login,
-            'articles' => $articles,
-            'modeEdit' => false,
-        ],'template_admin');
-//            }
-//        }
+            $this->response->render('articles', [
+                'login' => $this->login,
+                'articles' => $articles,
+                'modeEdit' => $mode,
+                'errorsAdd' => ERROR_ADD,
+            ], 'template_admin');
+        } else {
+            if (!$mode) {
+                $userDB = new \app\lib\User();
+                $author_id = $userDB->getIdUser($this->login);
+                $author_id = (int)$author_id["id"];
+                $this->articleDB->addArticle($data['title'], $data['content'], $author_id);
+            } else {
+                $this->articleDB->editArticle($article_id, $data['title'], $data['content']);
+            }
+            $articles = $this->articleDB->getAllIdAndField('title');
+            $this->response->render('articles', [
+                'login' => $this->login,
+                'articles' => $articles,
+                'modeEdit' => 'add',
+            ], 'template_admin');
+        }
     }
+
 
     /**
      * delete Article
@@ -92,7 +95,7 @@ class ControllerArticleDB extends Controller
         $this->response->render('articles', [
             'login' => $this->login,
             'articles' => $articles,
-            'modeEdit' => false,
+            'modeEdit' => 'add',
         ],'template_admin');
     }
 
@@ -112,13 +115,13 @@ class ControllerArticleDB extends Controller
                     'login' => $this->login,
                     'articles' => $articles,
                     'article' => $article,
-                    'modeEdit' => true,
+                    'modeEdit' => 'edit',
                 ],'template_admin');
             }else{
                 $this->response->render('articles', [
                     'login' => $this->login,
                     'articles' => $articles,
-                    'modeEdit' => false,
+                    'modeEdit' => 'add',
                 ],'template_admin');
             }
         }
