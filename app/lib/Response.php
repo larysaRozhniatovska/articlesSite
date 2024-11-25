@@ -23,5 +23,6 @@ class Response
     function redirect(string $url) : never
     {
         Router::redirect($url);
+        exit;
     }
 }
