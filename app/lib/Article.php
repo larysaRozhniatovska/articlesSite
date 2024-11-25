@@ -23,4 +23,31 @@ class Article extends AbstractDB
 
     }
 
+    /**
+     * update {$this->table}
+     * @param int $id
+     * @param string $title
+     * @param string $content
+     * @return bool
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function editArticle(int $id, string $title, string $content) : bool
+    {
+        $query = "UPDATE {$this->table} SET title = '{$title}', content = '{$content}' WHERE id = {$id}"; ;
+        return $this->queryBool($query);
+    }
+
+    /**
+     * returns all article parameters by id and author login
+     * @param int $id
+     * @return bool|array
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function getArticle(int $id) : bool |array
+    {
+        $query = "SELECT {$this->table}.*, users.login as author FROM {$this->table} INNER JOIN users ON {$this->table}.author_id = users.id  WHERE {$this->table}.id = {$id}";
+        return $this->queryRow($query);
+
+    }
+
 }

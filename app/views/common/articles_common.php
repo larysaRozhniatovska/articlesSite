@@ -1,7 +1,7 @@
 <div class="div-colum">
     <form action="#"
           method="post">
-        <button id="id-register" type="button" class="w3-btn w3-light-blue"
+        <button id="id-register" type="button" class="w3-btn w3-light-blue" name="openParamArticle"
                 onclick="document.getElementById('formModal').style.display='block'">Add Article</button>
     </form>
 </div>
@@ -35,12 +35,25 @@
             </tbody>
         <?php endif; ?>
     </table>
+
 </div>
-<form action="<?= \app\lib\Router::url('addArticle')?>" method="post" name="formAddArticle" id="formModal"
+<?php $article_id = 0;
+if (!empty($article)){
+    $article_id = $article['id'];
+}
+?>
+<form action="<?= \app\lib\Router::url('addArticle') . '&article_id=' . $article_id . '&modeEdit=' . $modeEdit?>"
+      method="post" name="formAddArticle" id="formModal"
       class="w3-panel  w3-center w3-modal"  >
     <div class="w3-modal-content ">
         <header class="w3-container w3-teal">
-            <h1 class="w3-border-left w3-text-red w3-xlarge ">Add Article</h1>
+            <h1 class="w3-border-left w3-text-red w3-xlarge ">
+                <?php if ($modeEdit): ?>
+                    Edit Article
+                <?php else: ?>
+                    Add Article
+                <?php endif; ?>
+            </h1>
             <span onclick="document.getElementById('formModal').style.display='none'"
                   class="w3-button w3-display-topright">&times;
             </span>
@@ -48,14 +61,28 @@
         </header>
         <div class="w3-margin">
             <label for="id-title">Title</label>
-            <input class="w3-input" type="text" name="title" id="id-title" placeholder="Enter title">
+            <?php if (!empty($article)): ?>
+            <input class="w3-input" type="text" name="title" id="id-title" value="<?=$article['title']?>">
+            <?php else: ?>
+                <input class="w3-input" type="text" name="title" id="id-title" placeholder="Enter title">
+            <?php endif; ?>
         </div>
         <div class="div-colum">
             <label for="id-content">Content</label>
-            <textarea  name="content" id="id-content" placeholder="Enter content"> </textarea>
+            <?php if (!empty($article)): ?>
+                <textarea  name="content" id="id-content" > <?=$article['content']?></textarea>
+            <?php else: ?>
+                <textarea  name="content" id="id-content" placeholder="<?=$article['content']?>"> </textarea>
+            <?php endif; ?>
         </div>
         <div class="w3-container w3-center w3-margin-bottom w3-margin-top ">
-            <button class="w3-btn w3-teal w3-margin-bottom" style="min-width:50%">Add</button>
+            <button class="w3-btn w3-teal w3-margin-bottom" style="min-width:50%">
+                <?php if ($modeEdit): ?>
+                Edit
+                <?php else: ?>
+                Add
+                <?php endif; ?>
+            </button>
         </div>
         <?php if (!empty($errorsAdd)): ?>
         <ul class="w3-red w3-left w3-left-align" id="errorsAdd">
@@ -66,3 +93,12 @@
         <?php endif; ?>
     </div>
 </form>
+<?php if($modeEdit):?>
+    <script>
+        document.getElementById('formModal').style.display='block';
+    </script>
+<?php else: ?>
+    <script>
+        document.getElementById('formModal').style.display='hide';
+    </script>
+<?php endif; ?>

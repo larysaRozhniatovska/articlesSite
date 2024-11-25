@@ -26,6 +26,7 @@ class ControllerArticleDB extends Controller
         $this->response->render('articles', [
             'login' => $this->login,
             'articles' => $articles,
+            'modeEdit' => false,
         ],'template_admin');
     }
 
@@ -36,13 +37,18 @@ class ControllerArticleDB extends Controller
      */
     public function addArticle() : void
     {
-        $userDB = new \app\lib\User();
-        $author_id = $userDB->getIdUser($this->login);
+        $mode = false;
+        if (isset($_GET['modeEdit'])) {
+            $mode = (bool)filter_input(INPUT_GET, 'modeEdit');
+        }
+        $article_id = 0;
+        if (isset($_GET['article_id'])) {
+            $article_id = (int)filter_input(INPUT_GET, 'article_id');
+        }
         $data = [
             'title' => filter_input(INPUT_POST, 'title'),
             'content' => filter_input(INPUT_POST, 'content'),
         ];
-
 //        $errors = $this->validators->validateInfoUser($data);
 //        if (!empty($errors)) {
 //            $this->response->render('index', ['errorsAdd' => $errors]);
@@ -51,12 +57,21 @@ class ControllerArticleDB extends Controller
 //            if (!empty($res)){
 //                $this->response->render('index', ['errorsAdd' => $res]);
 //            }else {
-        $author_id = (int) $author_id["id"];
-        $this->articleDB->addArticle($data['title'], $data['content'], $author_id);
-        $articles = $this->articleDB->getAllIdAndField('title');
+
+        if (!$mode) {
+            $userDB = new \app\lib\User();
+            $author_id = $userDB->getIdUser($this->login);
+            $author_id = (int) $author_id["id"];
+            $this->articleDB->addArticle($data['title'], $data['content'], $author_id);
+        }else{
+            $this->articleDB->editArticle($article_id,$data['title'], $data['content']);
+        }
+
+            $articles = $this->articleDB->getAllIdAndField('title');
         $this->response->render('articles', [
             'login' => $this->login,
             'articles' => $articles,
+            'modeEdit' => false,
         ],'template_admin');
 //            }
 //        }
@@ -73,14 +88,45 @@ class ControllerArticleDB extends Controller
         if(is_numeric($id)) {
             $this->articleDB->delRow($id);
         }
-        $article = $this->articleDB->getAllIdAndField('title');
+        $articles = $this->articleDB->getAllIdAndField('title');
         $this->response->render('articles', [
             'login' => $this->login,
-            'articles' => $article,
+            'articles' => $articles,
+            'modeEdit' => false,
         ],'template_admin');
     }
 
     /**
+     * edit article parameters
+     * @return void
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function editArticle() : void
+    {
+        $id = (int)filter_input(INPUT_POST, 'idEditArticle');
+        if(is_numeric($id)) {
+            $article = $this->articleDB->getArticle($id);
+            $articles = $this->articleDB->getAllIdAndField('title');
+            if ($article) {
+                $this->response->render('articles', [
+                    'login' => $this->login,
+                    'articles' => $articles,
+                    'article' => $article,
+                    'modeEdit' => true,
+                ],'template_admin');
+            }else{
+                $this->response->render('articles', [
+                    'login' => $this->login,
+                    'articles' => $articles,
+                    'modeEdit' => false,
+                ],'template_admin');
+            }
+        }
+    }
+
+
+    /**
+     * view article parameters
      * @return void
      * @throws \Couchbase\QueryErrorException
      */
@@ -91,17 +137,14 @@ class ControllerArticleDB extends Controller
             $id_str = filter_input(INPUT_GET, 'id');
             $id = (int)$id_str;
             if ($id > 0) {
-                $article = $this->articleDB->getAllbyId($id);
+                $article = $this->articleDB->getArticle($id);
                 if ($article) {
-                    $userDB = new \app\lib\User();
-                    $user = $userDB->getAllbyId($article['author_id']);
-                    $author = $user['login'];
                     $date = new DateTime($article['created_at'], new DateTimeZone('UTC'));
                     $date->setTimezone(new DateTimeZone('CEST'));
                     $article['created_at'] = $date->format('Y-m-d H:i:s');
                     $this->response->render('article', [
                         'article' => $article,
-                        'author' => $author,
+                        'author' => $article['author'],
                     ], 'template_home');
                 }else{
                     $articles = $this->articleDB->getAll();

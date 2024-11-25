@@ -44,13 +44,56 @@ class User extends AbstractDB
      */
     public function addUser(string $login, string $pass) : bool
     {
-        $users = $this->getAll();
-        $logins = array_column($users, 'login');
-        if (in_array($login, $logins))
+        if ($this->validationAddUser($login))
             return false;
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $query = "INSERT INTO {$this->table}(login, password) VALUES ('{$login}','{$hash}')";
         return $this->queryBool($query);
+    }
+
+    /**
+     * update {$this->table}
+     * @param int $id
+     * @param string $login
+     * @param string $pass
+     * @return bool
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function editUser(int $id, string $login, string $pass) : bool
+    {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+        $query = "UPDATE {$this->table} SET login = '{$login}', password = '{$hash}' WHERE id = {$id}"; ;
+        return $this->queryBool($query);
+    }
+
+    /**
+     * user validation on login
+     * @param string $login
+     * @param string $pass
+     * @return bool
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function validationLoginUser(string $login, string $pass) : bool
+    {
+        $users = $this->getAll();
+        $logins = array_column($users, 'login');
+        $id = array_search($login,$logins);
+        if ($id === false)
+            return false;
+        return password_verify($pass, $users[$id]['password']);
+    }
+
+    /**
+     * user validation on login
+     * @param string $login
+     * @return bool true - exist login
+     * @throws \Couchbase\QueryErrorException
+     */
+    public function validationAddUser(string $login) : bool
+    {
+        $users = $this->getAll();
+        $logins = array_column($users, 'login');
+        return in_array($login, $logins);
     }
 
 }
